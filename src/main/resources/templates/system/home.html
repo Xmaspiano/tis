@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-sstore" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>Home</title>
+
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/import/Ajax-hook-master/wendu.ajaxhook.min.js"></script>
+    <!--<script type="text/javascript" src="/import/login-session-over.js"></script>-->
+
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/import/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <style>
+        .right-float {
+            float:right;
+        }
+        .left-float {
+            float:left;
+        }
+        .hid-overflow {
+            /*overflow:scroll;*/
+            overflow:hidden;
+        }
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north',border:false" style="height:50px;padding:0px" >
+    <div id="numm" class="easyui-meun left-float" style="padding:5px;">
+        <img class="easyui-linkbutton" src="/import/sandcastle.png" style="height: 40px">
+        <a href="#" class="easyui-linkbutton" data-options="plain:true">首页</a>
+        <a href="#" class="easyui-menubutton" data-options="menu:'#mm2'">收藏夹</a>
+        <a href="#" class="easyui-menubutton" data-options="menu:'#mm3'">关于</a>
+    </div>
+
+    <div class="easyui-meun right-float" style="padding:5px;">
+        Hello, <span style="color: #00bbee">
+            <shiro:principal property="account" />
+        </span>
+        <a href="#" class="easyui-menubutton" data-options="menu:'#mm4'">设置</a>
+        <img class="easyui-linkbutton" src="/import/sandcastle.png" style="height: 40px">
+    </div>
+
+    <div id="mm2" style="width:100px;">
+
+    </div>
+
+    <div id="mm3" class="menu-content" style="background:#f0f0f0;padding:10px;text-align:left">
+        <p style="font-size:14px;color:#444;">Try jQuery EasyUI to build your modern, interactive, javascript applications.</p>
+    </div>
+
+    <div id="mm4" style="width:100px;">
+        <div onclick="window.location.href = '/logout' ">退出</div>
+    </div>
+</div>
+<div class="hid-overflow" data-options="region:'west',split:true,collapsed:false,title:'菜单目录'" style="width:200px;" >
+    <div id="menu-accordion-left" class="easyui-accordion"
+         data-options="multiple:false,border:false,selected:true" style="width:100%;height:auto;">
+        <ul id="menu" class="easyui-tree">
+            <li>
+                <span>系统</span>
+                <ul>
+
+                    <li data-options="attributes:{url:'/system/index'}">首页</li>
+                    <!--<shiro:lacksRole name="manager">-->
+                        <li data-options="attributes:{url:'/app/user'}">信息上报</li>
+                    <!--<shiro:lacksRole name="manager">-->
+                    <shiro:hasRole name="manager">
+                        <li data-options="attributes:{url:'/app/user/manager'}">信息管理</li>
+                        <li data-options="attributes:{url:'/app/selectelement'}">表单选择项维护</li>
+                    </shiro:hasRole>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div >
+<div data-options="region:'center',border:false" >
+    <div id="body" class="easyui-tabs" style="height:100%">
+        <div class="hid-overflow" title="首页" closable="false">
+            <h3>首页，欢迎!!!</h3>
+        </div>
+    </div>
+</div>
+<div data-options="region:'south',border:false" style="height: 23px;">
+    <p style="text-align: center;font-size: smaller;margin: 2px 0px 0px">Copyright ©XmasWorking MedicalHelper.cn</p>
+</div>
+</body>
+<script>
+    $(function(){
+        $(document).bind('contextmenu',function(e){
+            e.preventDefault();
+            $('#mm').menu('show', {
+                left: e.pageX,
+                top: e.pageY
+            });
+        });
+
+        $('#body').tabs({
+            tools:[{
+                text:'<i class="fa fa-refresh" />',
+                width:26,
+                handler:function(){
+                    var tab = $('#body').tabs('getSelected');
+                    $('#body').tabs('update', {
+                        tab: tab,
+                        options: {
+                            title: tab.panel("options").title,
+                            content: tab.panel("options").content
+                        }
+                    });
+                }
+            },{
+                text:'<i class="fa fa-star-o" />',
+                width:26,
+                handler:function(){
+                    var tab = $('#body').tabs('getSelected');
+                }
+            },{
+                text:'<i class="fa fa-cogs" />',
+                width:26,
+                handler:function(){
+
+                }
+            }],
+            onBeforeClose: function(title){
+
+            },
+            onSelect: function(title, index){
+
+            }
+        });
+
+        $("#menu").tree({
+            onClick: function(node){
+                if(node.attributes.url != null && node.attributes.url != ""){
+                    addTab(node.attributes.url,node.text,node.id);
+                }
+            }
+        });
+    });
+
+    function addTab(url, title, id){
+        if ($('#body').tabs('exists', title)){
+            $('#body').tabs('select', title);
+        } else if (title) {
+            var content = '<iframe scrolling="no" frameborder="0" src="'+url+'" style="width:100%;height:100%;"></iframe>';
+            $('#body').tabs('add',{
+                title:title,
+                content:content,
+                id:id,
+                fit:true,
+                closable:true,
+                iconCls:''
+            });
+            $('#body').tabs('getTab', title).css('overflow', 'hidden');
+        }
+    }
+</script>
+</html>

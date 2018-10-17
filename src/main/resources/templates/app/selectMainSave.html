@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-sstore" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>新增下拉列表</title>
+
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/import/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body class="easyui-panel" style="padding: 5px">
+<div name="body" style="padding:10px 10px 20px 10px" data-options="fit:true">
+    <form id="form_selectelement_main_save" method="post" action="/app/selectelement/main/save">
+        <table cellpadding="5" style="width: 100%">
+            <tr>
+                <td>引用ID:</td>
+                <td>
+                    <!--/*@thymesVar id="mainObject" type="com.xmasworking.tis.entity.SelectElementMainEntity"*/-->
+                    <input class="easyui-textbox" type="text" name="hid_id" style="width: 270px" editable="false"
+                           disabled="disabled" th:value="${mainObject.id}" data-options="prompt:'新增时不显示ID'"/>
+                    <input type="hidden" name="id" th:value="${mainObject.id}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>菜单名称:</td>
+                <td>
+                    <!--/*@thymesVar id="mainObject" type="com.xmasworking.tis.entity.SelectElementMainEntity"*/-->
+                    <input class="easyui-textbox" type="text" name="selectname" style="width: 270px"
+                           th:value="${mainObject.selectname}" data-options="required:true"/>
+                </td>
+            </tr>
+            <tr>
+                <td>菜单描述:</td>
+                <td>
+                    <!--/*@thymesVar id="mainObject" type="com.xmasworking.tis.entity.SelectElementMainEntity"*/-->
+                    <input class="easyui-textbox" name="selectdescribe" style="height:90px;width: 270px"
+                           th:value="${mainObject.selectdescribe}"
+                           data-options="multiline:true,prompt:'填写菜单描述，便于知晓作用'" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="text-align:center;padding:5px">
+        <button class="easyui-linkbutton"
+                onclick="submitForm()" style="width: 80px">提交</button>
+        <button class="easyui-linkbutton"
+                onclick="thisDialogClose()" style="width: 80px">返回</button>
+    </div>
+</div>
+<script>
+    function submitForm(){
+        $.messager.progress();
+        $.ajax({
+            type: "POST",
+            url: "/app/selectelement/main/save",
+            data: $('#form_selectelement_main_save').serialize(),
+            dataType: "json",
+            success: function(data){
+                if(data.status=='SUCCESS'){
+                    $.messager.show({
+                        title: '消息',
+                        msg: data.msg,
+                        timeout: 1800,
+                    });
+                    thisDialogClose();
+                }else{
+                    $.messager.alert('错误',data.msg,'error');
+                }
+                $.messager.progress('close');
+            }
+        });
+    }
+
+    function thisDialogClose(){
+        $(self.$('div[name=body]').parent()).dialog('close');
+        $(self.$('div[name=body]').parent()).dialog({content:''});
+    }
+</script>
+</body>
+</html>

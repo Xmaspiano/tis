@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-sstore" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!--/*@thymesVar id="titleName" type="java.lang.String"*/-->
+    <title th:text="${titleName}"></title>
+
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/import/Ajax-hook-master/wendu.ajaxhook.min.js"></script>
+    <!--<script type="text/javascript" src="/import/login-session-over.js"></script>-->
+
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/import/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body class="easyui-layout" >
+<div id="table-showuserinfo"></div>
+</body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var titleName = /*[[${titleName}]]*/ "";
+    var dataUrl = /*[[${dataUrl}]]*/ "";
+
+    var columns = /*[[${columns}]]*/ "";
+    /*]]>*/
+</script>
+<script>
+    var $targetTag = $("#table-showuserinfo");
+
+    var field_columns = eval("("+columns+")");
+
+    var __date={
+        idName:"table-showuserinfo",
+        tollIdName:"tb-showuserinfo",
+        datagrid:{
+            title:"<i class='icon-save'/>&nbsp;"+titleName,
+            url: dataUrl,
+            method:"post",
+            loadMsg:"数据加载中...",
+            pageSize:30,
+            columns:field_columns,
+            idField:"id",
+            queryParams: {
+
+            }
+        },
+
+    };
+
+    var toolbar = [{
+        text:'<i class="fa fa-pencil">&nbsp;新增</i>',
+        handler:function(){alert('add')}
+    },{
+        text:'<i class="fa fa-cut">&nbsp;删除</i>',
+        handler:function(){alert('cut')}
+    },'-',{
+        text:'<i class="fa fa-save">&nbsp;保存</i>',
+        handler:function(){alert('save')}
+    }];
+
+    $(function() {
+        //初始化treegrid数据
+        $targetTag.datagrid({
+            title: __date.datagrid.title,
+            url: __date.datagrid.url,
+            pagination:true,
+            method: __date.datagrid.method,
+            loadMsg: __date.datagrid.loadMsg,
+            fitColumns:true,
+            fit:true,
+            pageSize:__date.datagrid.pageSize,
+            toolbar: toolbar,
+            border:false,
+            rownumbers:true,
+            singleSelect:true,
+            idField:__date.datagrid.idField,
+            queryParams: __date.datagrid.queryParams,
+            columns: __date.datagrid.columns
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-sstore" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>学员信息</title>
+
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/import/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body style="padding: 5px">
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'south',border:false"></div>
+    <div data-options="region:'west',title:'下拉菜单',split:true" style="width:300px;">
+        <table class="easyui-datagrid" id="main_table"
+               data-options="url:'/app/selectelement/main.json',method:'post',border:false,toolbar:'#select_main_tool',
+               onLoadSuccess:mainReload,singleSelect:true,fit:true,fitColumns:true">
+            <thead>
+            <tr>
+                <th data-options="field:'id'" width="80">引用ID</th>
+                <th data-options="field:'selectname'" width="100">下拉菜单名称</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div data-options="region:'center',title:'菜单明细'">
+        <table class="easyui-datagrid" id="detail_table"
+               data-options="url:'/app/selectelement/detail.json',method:'post',border:false,toolbar:'#select_detail_tool',
+               onLoadSuccess:detailReload,rownumbers:true,singleSelect:true,fit:true,fitColumns:true">
+            <thead>
+            <tr>
+                <th data-options="field:'text'" width="100">列表项</th>
+                <th data-options="field:'id'" width="80">列表值</th>
+                <th data-options="field:'elementdescribe'" width="280">描述</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="select_main_tool" style="height:auto;display: none">
+    <div style="padding: 3px">
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="main_add()">
+            <i class="fa fa-plus">&nbsp;新增</i>
+        </a>
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="main_edit()">
+            <i class="fa fa-pencil">&nbsp;修改</i>
+        </a>
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="del_main()">
+            <i class="fa fa-trash">&nbsp;删除</i>
+        </a>
+        <!--<div style="float: right">-->
+            <!--<input id="mainsearch" name="mainsearch" class="easyui-searchbox" style="width:80px;"-->
+                   <!--data-options="searcher:search,prompt:'搜索'"/>-->
+        <!--</div>-->
+    </div>
+</div>
+<div id="select_detail_tool" style="height:auto;display: none">
+    <div style="padding: 3px">
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="detail_add()">
+            <i class="fa fa-plus">&nbsp;添加</i>
+        </a>
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="detail_edit()">
+            <i class="fa fa-pencil">&nbsp;编辑</i>
+        </a>
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="del_detail()">
+            <i class="fa fa-trash">&nbsp;删除</i>
+        </a>
+        <!--<div style="float: right">-->
+            <!--<input id="detailsea" name="orderid" class="easyui-searchbox" style="width:280px;"-->
+                   <!--data-options="searcher:search,prompt:'搜索'"/>-->
+        <!--</div>-->
+
+    </div>
+</div>
+<div id="main_save"></div>
+<div id="detail_save"></div>
+</body>
+<script>
+    var main_select_id = undefined;
+    var detail_select_id = undefined;
+
+    $(function(){
+        $('#main_save').dialog({
+            title: '菜单编辑',
+            top:50,
+            width: 400,
+            height: 280,
+            closed: true,
+            cache: false,
+            modal: true,
+            onClose:function(){
+                var select_row = $('#main_table').treegrid('getSelected');
+                if(select_row) {
+                    main_select_id = select_row.id;
+                }
+                $("#main_table").datagrid('reload');
+            }
+        });
+
+        $('#detail_save').dialog({
+            title: '选项编辑',
+            top:50,
+            width: 400,
+            height: 320,
+            closed: true,
+            cache: false,
+            modal: true,
+            onClose:function(){
+                var select_row = $('#detail_table').treegrid('getSelected');
+                if(select_row) {
+                    detail_select_id = select_row.id;
+                }
+                $("#detail_table").datagrid('reload');
+            }
+        });
+
+        $("#main_table").datagrid({
+            onSelect:function(rowIndex, rowData){
+                $("#detail_table").datagrid('reload',rowData);
+            }
+        });
+
+    })
+    function main_add() {
+        $('#main_save').dialog('refresh', '/app/selectelement/main/add');
+        $('#main_save').dialog('open');
+    }
+    function main_edit() {
+        var selectRow = $('#main_table').treegrid('getSelected');
+        if(selectRow != null) {//有选择资料,将部分资料值初始化到表单
+            $('#main_save').dialog('refresh', '/app/selectelement/main/edit?id='+selectRow.id);
+            $('#main_save').dialog('open');
+        }else{
+            $.messager.alert('提示','请选择一行','info');
+        }
+    }
+    function detail_add() {
+        var selectRow = $('#main_table').treegrid('getSelected');
+        if(selectRow != null) {//有选择资料,将部分资料值初始化到表单
+            $('#detail_save').dialog('refresh', '/app/selectelement/detail/add?MainId='+selectRow.id);
+            $('#detail_save').dialog('open');
+        }else{
+            $.messager.alert('提示','请选择一行','info');
+        }
+    }
+    function detail_edit() {
+        var selectRow = $('#detail_table').treegrid('getSelected');
+        if(selectRow != null) {//有选择资料,将部分资料值初始化到表单
+            $('#detail_save').dialog('refresh', '/app/selectelement/detail/edit?id='+selectRow.id);
+            $('#detail_save').dialog('open');
+        }else{
+            $.messager.alert('提示','请选择一行','info');
+        }
+    }
+
+    function del_main(){
+        var selectRow = $('#main_table').treegrid('getSelected');
+        if(selectRow != null) {//有选择资料,将部分资料值初始化到表单
+            delAjax("/app/selectelement/main/del",selectRow,$('#main_table'));
+        }else{
+            $.messager.alert('提示','请选择一行','info');
+        }
+    }
+    
+    function del_detail() {
+        var selectRow = $('#detail_table').treegrid('getSelected');
+        if(selectRow != null) {//有选择资料,将部分资料值初始化到表单
+            delAjax("/app/selectelement/detail/del",selectRow,$('#detail_table'));
+        }else{
+            $.messager.alert('提示','请选择一行','info');
+        }
+    }
+    
+    function delAjax(url,data,obj) {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            dataType: "json",
+            success: function(data){
+                if(data.status=='SUCCESS'){
+                    $.messager.show({
+                        title: '消息',
+                        msg: data.msg,
+                        timeout: 1800,
+                    });
+                    if(obj){
+                        obj.datagrid('reload');
+                    }
+                }else{
+                    $.messager.alert('错误',data.msg,'error');
+                }
+            }
+        });
+    }
+
+    function mainReload(data) {
+        var index = getDataIndex(data,main_select_id);
+        if(index != undefined){
+            $('#main_table').datagrid('selectRow',index);
+        }
+    }
+    
+    function detailReload(data) {
+        var index = getDataIndex(data,detail_select_id);
+        if(index != undefined){
+            $('#detail_table').datagrid('selectRow',index);
+        }
+    }
+
+    function getDataIndex(data,select_id) {
+        var index = undefined;
+        if(select_id != undefined) {
+            for(var i=0;i<data.total;i++) {
+                if (data.rows[i].id == select_id) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+    
+    function search(value,name){
+
+    }
+</script>
+</html>

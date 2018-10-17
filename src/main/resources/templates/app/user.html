@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-sstore" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>学员信息</title>
+
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/import/jquery-easyui-1.5.3/locale/easyui-lang-zh_CN.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/import/jquery-easyui-1.5.3/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/import/font-awesome-4.7.0/css/font-awesome.min.css">
+</head>
+<body style="padding: 5px;">
+<style>
+    table,table tr th, table tr td { border:1px solid #0094; }
+    #table1 tr th{
+        max-width: 130px
+    }
+    #table1 tr td{
+        min-width: 130px
+    }
+
+    #table3 tr th{
+        width:130px;
+        /*max-width: 150px*/
+    }
+    #table3 tr td{
+        min-width: 160px
+    }
+
+    #table4 tr th{
+        width:180px;
+        /*max-width: 180px*/
+    }
+    #table4 tr td{
+        min-width: 180px
+    }
+
+    .controller-lock{
+        width: 230px;
+    }
+
+    .full-width-middle{
+        min-width: 240px
+    }
+    .full-width-large{
+        min-width: 380px
+    }
+    .full-width-large2{
+        min-width: 515px
+    }
+</style>
+<div class="easyui-panel" title="个人信息编辑" data-options="fit:true">
+    <shiro:hasRole name="manager">
+        <div style="margin:10px">
+            <p>信息状态：
+                <span style="color: cornflowerblue">
+                    已提交（学员可修改）、审核中（学员锁定）、退回（学员可修改）、通过（学员锁定）、归档（完全锁定）
+                </span>
+            </p>
+            <!--/*@thymesVar id="statusName" type="java.lang.String"*/-->
+            <p>当前状态：<span name="spanText" style="color: #c9302c" th:text="${statusName}">无数据...</span></p>
+        </div>
+        <div style="margin:10px">
+            <button name="statusButton" class="easyui-linkbutton" data-status="2" >审核中</button>
+            <button name="statusButton" class="easyui-linkbutton" data-status="3" >退回</button>
+            <button name="statusButton" class="easyui-linkbutton" data-status="4" >通过</button>
+            <button name="statusButton" class="easyui-linkbutton" data-status="5" >归档</button>
+        </div>
+    </shiro:hasRole>
+    <div style="padding:10px 60px 20px 60px;min-width: 1044px">
+        <!--培训基地-->
+        <!--上报状态-->
+        <!--审核状态-->
+        <!--审核未通过原因-->
+        <h1 style="text-align: center">学员信息表</h1>
+        <form id="form_app_user" method="post" style="" action="/app/user/save">
+            <shiro:hasRole name="manager">
+                <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                <input name="id" type="hidden" th:value="${userEntity.id}">
+                <input name="accountid" type="hidden" th:value="${userEntity.accountid}">
+            </shiro:hasRole>
+            <table id="table1" cellpadding="5" style="width:100%">
+                <tr>
+                    <th>姓名:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="name" name="name" th:value="${userEntity.name}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th>性别:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="sex" name="sex" style="width: 130px" th:value="${userEntity.sex}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=15'">
+                        </input>
+                    </td>
+                    <th>出生日期:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input id="birth" name="birth" class="easyui-datebox" th:value="${userEntity.birth}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <td colspan="2" rowspan="5" style="width: 130px;text-align: center">
+                        <img src="/import/sandcastle.png">
+                    </td>
+                </tr>
+                <tr>
+                    <th>身份证件类型:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="idtype" name="idtype" style="width: 130px" th:value="${userEntity.idtype}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=16'">
+                        </input>
+                    </td>
+                    <th>身份证件号码:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="idcardno" name="idcardno" th:value="${userEntity.idcardno}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th>国家或地区:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="country" name="country" style="width: 130px" th:value="${userEntity.country}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=17'">
+                        </input>
+                    </td>
+                </tr>
+                <tr>
+                    <th>民族:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="nation" name="nation" style="width: 130px" th:value="${userEntity.nation}" th:disabled="${disabled}"
+                               data-options="required:true,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=18'">
+                        </input>
+                    </td>
+                    <th>手机号:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="tel" name="tel" th:value="${userEntity.tel}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th>邮箱:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="mail" name="mail" th:value="${userEntity.mail}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>QQ:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="qq" name="qq" th:value="${userEntity.qq}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th>往届/应届:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="iswj" name="iswj" style="width: 130px" th:value="${userEntity.iswj}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=19'">
+                        </input>
+                    </td>
+                    <th>培训专业:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="pxzy" name="pxzy" style="width: 130px" th:value="${userEntity.pxzy}" th:disabled="${disabled}"
+                               data-options="required:true,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=20'">
+                        </input>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="table-title">招收年度:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="zsnd" name="zsnd" th:value="${userEntity.zsnd}" th:disabled="${disabled}"
+                               data-options="required:true,increment:1,min:2000"/>
+                    </td>
+                    <th class="table-title">实际培训开始时间:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-datebox" id="pxkssj" name="pxkssj" th:value="${userEntity.pxkssj}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th class="table-title">培训年限核定:</th>
+                    <td >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="pxnxhd" name="pxnxhd" th:value="${userEntity.pxnxhd}" disabled="disabled"
+                               data-options="required:true,increment:1,min:1,max:3"/>
+                    </td>
+                </tr>
+            </table>
+            <div style="padding: 10px 0px">学历信息</div>
+            <table cellpadding="5" style="width: 100%">
+                <tr>
+                    <th>最高学历:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="zgxl" name="zgxl" style="width: 130px" th:value="${userEntity.zgxl}" th:disabled="${disabled}"
+                               data-options="required:true,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=21'">
+                        </input>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr>
+                    <th>毕业学校（专科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-middle" id="zk_byxx" name="zk_byxx" th:value="${userEntity.zk_byxx}" th:disabled="${disabled}"/>
+                    </td>
+                    <th>毕业年份（专科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="zk_bynf" name="zk_bynf" value="" th:value="${userEntity.zk_bynf}" th:disabled="${disabled}"
+                               data-options="increment:1"/>
+                    </td>
+                    <th>毕业专业（专科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-middle" id="zk_byzy" name="zk_byzy" th:value="${userEntity.zk_byzy}" th:disabled="${disabled}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>毕业学校（本科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-middle" id="bk_byxx" name="bk_byxx" th:value="${userEntity.bk_byxx}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                    <th>毕业年份（本科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="bk_bynf" name="bk_bynf" value="" th:value="${userEntity.bk_bynf}" th:disabled="${disabled}"
+                               data-options="required:true,increment:1"/>
+                    </td>
+                    <th>毕业专业（本科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="bk_byzy" name="bk_byzy" th:value="${userEntity.bk_byzy}" th:disabled="${disabled}"
+                               data-options="required:true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>学位（本科）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="bk_xw" name="bk_xw" style="width: 130px" th:value="${userEntity.bk_xw}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=22'">
+                        </input>
+                    </td>
+                    <th>是否全科定向学员:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="isqkdddxxy" name="isqkdddxxy" style="width: 130px" th:value="${userEntity.isqkdddxxy}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'">
+                        </input>
+                    </td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <th>是否硕士研究生:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="isssyjs" name="isssyjs" style="width: 130px" th:value="${userEntity.isssyjs}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'">
+                        </input>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr class="isssyjs_controller">
+                    <th>毕业院校（硕士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-middle" id="ss_byyx" name="ss_byyx" th:value="${userEntity.ss_byyx}" th:disabled="${disabled}" />
+                    </td>
+                    <th>毕业年份（硕士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="ss_bynf" name="ss_bynf" th:value="${userEntity.ss_bynf}" th:disabled="${disabled}"
+                               data-options="increment:1"/>
+                    </td>
+                    <th>毕业专业（硕士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="ss_byzy" name="ss_byzy" th:value="${userEntity.ss_byzy}" th:disabled="${disabled}"/>
+                    </td>
+                </tr>
+                <tr class="isssyjs_controller">
+                    <th>学位（硕士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="ss_xw" name="ss_xw" style="width: 130px" th:value="${userEntity.ss_xw}" th:disabled="${disabled}"
+                               data-options="panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=23'">
+                        </input>
+                    </td>
+                    <th>学位类型（硕士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="ss_xwlx" name="ss_xwlx" style="width: 130px" th:value="${userEntity.ss_xwlx}" th:disabled="${disabled}"
+                               data-options="panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=24'">
+                        </input>
+                    </td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <th>是否博士研究生:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="isbsyjs" name="isbsyjs" style="width: 130px" th:value="${userEntity.isbsyjs}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'" />
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr class="isbsyjs_controller">
+                    <th>毕业院校（博士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="bs_byyx" name="bs_byyx"  style="" th:value="${userEntity.bs_byyx}" th:disabled="${disabled}"/>
+                    </td>
+                    <th>毕业年份（博士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-numberspinner" id="bs_bynf" name="bs_bynf" value="" th:value="${userEntity.bs_bynf}" th:disabled="${disabled}"
+                               data-options="increment:1"/>
+                    </td>
+                    <th>毕业专业（博士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="bs_byzy" name="bs_byzy" th:value="${userEntity.bs_byzy}" th:disabled="${disabled}" />
+                    </td>
+                </tr>
+                <tr class="isbsyjs_controller">
+                    <th>学位（博士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="bs_xw" name="bs_xw" style="width: 130px" th:value="${userEntity.bs_xw}" th:disabled="${disabled}"
+                               data-options="panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=25'">
+                        </input>
+                    </td>
+                    <th>学位类型（博士）:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="bs_xwlx" name="bs_xwlx" style="width: 130px" th:value="${userEntity.bs_xwlx}" th:disabled="${disabled}"
+                               data-options="panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=24'">
+                        </input>
+                    </td>
+                    <td colspan="2"></td>
+                </tr>
+
+            </table>
+            <div style="padding: 10px 0px">身份信息</div>
+            <table id="table3" cellpadding="5" style="width: 100%">
+                <tr>
+                    <th>人员类型:</th>
+                    <td class="controller-lock">
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="xylx" name="xylx" style="width: 130px" th:value="${userEntity.xylx}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=26'">
+                        </input>
+                    </td>
+                    <td colspan="4"></td>
+                </tr>
+                <tr class="xylx_controller">
+                    <th>工作单位:</th>
+                    <td colspan="3" >
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-large2" id="workcompany" name="workcompany" th:value="${userEntity.workcompany}" th:disabled="${disabled}"
+                               data-options="prompt:'与单位公章对应的官方全称'" />
+                    </td>
+                    <th>医院级别:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="companylevel" name="companylevel" style="width: 130px" th:value="${userEntity.nation}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=28'">
+                        </input>
+                    </td>
+                </tr>
+                <tr class="xylx_controller">
+                    <th>医院等次:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="yxdc" name="yxdc" style="width: 130px" th:value="${userEntity.yxdc}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=29'">
+                        </input>
+                    </td>
+                    <th>医疗卫生机构类别:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="ylwsjgtype" name="ylwsjgtype" style="width: 130px" th:value="${userEntity.ylwsjgtype}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=30'">
+                        </input>
+                    </td>
+                    <th>医疗卫生机构隶属关系:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox" id="ylwsjglsgx" name="ylwsjglsgx" th:value="${userEntity.ylwsjglsgx}" th:disabled="${disabled}" />
+                    </td>
+                </tr>
+            </table>
+            <div style="padding: 10px 0px">其他</div>
+            <table id="table4" cellpadding="5" style="width: 100%">
+                <tr>
+                    <th>是否通过全国医师资格考试:</th>
+                    <td class="controller-lock">
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="istgqgyszgks" name="istgqgyszgks" style="width: 130px" th:value="${userEntity.istgqgyszgks}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'">
+                        </input>
+                    </td>
+                    <th >
+                        <div class="istgqgyszgks_controller">
+                            执业医师资格证号:
+                        </div>
+                    </th>
+                    <td colspan="2">
+                        <div class="istgqgyszgks_controller">
+                            <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                            <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                            <input class="easyui-textbox" id="zyyszgzh" name="zyyszgzh" th:value="${userEntity.zyyszgzh}" th:disabled="${disabled}"
+                                   data-options="required:true"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th >是否为对口支援计划住院医师:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="isdkzyjhzyys" name="isdkzyjhzyys" style="width: 130px" th:value="${userEntity.isdkzyjhzyys}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'">
+                        </input>
+                    </td>
+                    <th >
+                        <div class="isdkzyjhzyys_controller">
+                            对口支援计划住院医师送出单位:
+                        </div>
+                    </th>
+                    <td colspan="2">
+                        <div class="isdkzyjhzyys_controller">
+                            <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                            <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                            <input class="easyui-textbox full-width-large" id="dkzyjhzyysscdw" name="dkzyjhzyysscdw" th:value="${userEntity.dkzyjhzyysscdw}" th:disabled="${disabled}"
+                                   data-options="prompt:'与单位公章对应的官方全称'" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>是否在协同单位培训:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="isxtdwpx" name="isxtdwpx" style="width: 130px" th:value="${userEntity.isxtdwpx}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:80,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=2'">
+                        </input>
+                    </td>
+                    <td colspan="3"></td>
+                </tr>
+                <tr class="isxtdwpx_controller">
+                    <th>协同单位:</th>
+                    <td colspan="2">
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-textbox full-width-large" id="xtdwname" name="xtdwname" th:value="${userEntity.xtdwname}" th:disabled="${disabled}"
+                               data-options="prompt:'与单位公章对应的官方全称'"/>
+                    </td>
+                    <th>协同医院级别:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="xrdwlevel" name="xrdwlevel" style="width: 130px" th:value="${userEntity.xrdwlevel}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=28'">
+                        </input>
+                    </td>
+                </tr>
+                <tr class="isxtdwpx_controller">
+                    <th>协同医院等次:</th>
+                    <td>
+                        <!--/*@thymesVar id="userEntity" type="com.xmasworking.tis.entity.UserEntity"*/-->
+                        <!--/*@thymesVar id="disabled" type="java.lang.Boolean"*/-->
+                        <input class="easyui-combobox" id="xtyydc" name="xtyydc" style="width: 130px" th:value="${userEntity.xtyydc}" th:disabled="${disabled}"
+                               data-options="required:true,panelHeight:120,valueField:'id',textField:'text',
+                                url:'/app/selectelement/get/detail.json?id=29'">
+                        </input>
+                    </td>
+                    <td colspan="3"></td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align:center;padding:5px">
+            <shiro:lacksRole name="manager">
+                <a href="javascript:void(0)" class="easyui-linkbutton" style="width: 120px" onclick="submitForm()">提交审核</a>
+            </shiro:lacksRole>
+            <shiro:hasRole name="manager">
+                <a href="javascript:void(0)" class="easyui-linkbutton" style="width: 120px" onclick="submitFormManager()">保存修改</a>
+            </shiro:hasRole>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+        //本科3年
+        //专硕2年
+        //专博1年
+        //八年制1年
+        //科硕，科博3年
+        $("#zgxl").combobox({
+            onSelect: function(record){
+                var studyYear = 0;
+                switch(record.text){
+                    case '本科':
+                        studyYear = 3;
+                        break;
+                    case '专业型硕士':
+                        studyYear = 2;
+                        break;
+                    case '专业型博士':
+                        studyYear = 1;
+                        break;
+                    case '科研型硕士':
+                        studyYear = 3;
+                        break;
+                    case '科研型博士':
+                        studyYear = 3;
+                        break;
+                    case '八年制':
+                        studyYear = 1;
+                        break;
+                    default:
+                        break;
+                }
+                $('#pxnxhd').numberspinner('setValue', studyYear);  // set value
+            }
+        });
+
+        $('#xylx').combobox({
+            onSelect: function(record) {
+                if(record.text=='本院职工' || record.text=='委培单位人'){
+                    $('.xylx_controller').show();
+                    xylx_controller_required(true);
+                }else{
+                    $('.xylx_controller').hide();
+                    xylx_controller_required(false);
+                }
+            }
+        });
+
+
+        $('#isbsyjs').combobox({
+            onSelect: function(record) {
+                if(record.text=='是'){
+                    $('.isbsyjs_controller').show();
+                    isbsyjs_controller_required(true);
+                }else{
+                    $('.isbsyjs_controller').hide();
+                    isbsyjs_controller_required(false);
+                }
+            }
+        });
+
+        $('#isssyjs').combobox({
+            onSelect: function(record) {
+                if(record.text=='是'){
+                    $('.isssyjs_controller').show();
+                    isssyjs_controller_required(true);
+                }else{
+                    $('.isssyjs_controller').hide();
+                    isssyjs_controller_required(false);
+                }
+            }
+        });
+
+
+        $('#istgqgyszgks').combobox({
+            onSelect: function(record) {
+                if(record.text=='是'){
+                    $('.istgqgyszgks_controller').show();
+                    istgqgyszgks_controller_required(true);
+                }else{
+                    $('.istgqgyszgks_controller').hide();
+                    istgqgyszgks_controller_required(false);
+                }
+            }
+        });
+
+        $('#isdkzyjhzyys').combobox({
+            onSelect: function(record) {
+                if(record.text=='是'){
+                    $('.isdkzyjhzyys_controller').show();
+                    isdkzyjhzyys_controller_required(true);
+                }else{
+                    $('.isdkzyjhzyys_controller').hide();
+                    isdkzyjhzyys_controller_required(false);
+                }
+            }
+        });
+
+        $('#isxtdwpx').combobox({
+            onSelect: function(record) {
+                if(record.text=='是'){
+                    $('.isxtdwpx_controller').show();
+                    isxtdwpx_controller_required(true);
+                }else{
+                    $('.isxtdwpx_controller').hide();
+                    isxtdwpx_controller_required(false);
+                }
+            }
+        });
+
+    });
+    function isbsyjs_controller_required(flag) {
+        $('#bs_byyx').textbox({
+            required:flag
+        });
+        $('#bs_bynf').numberspinner({
+            required:flag
+        });
+        $('#bs_byzy').textbox({
+            required:flag
+        });
+        $('#bs_xw').combobox({
+            required:flag
+        });
+        $('#bs_xwlx').combobox({
+            required:flag
+        });
+    }
+
+    function isssyjs_controller_required(flag) {
+        $('#ss_byyx').textbox({
+            required:flag
+        });
+        $('#ss_bynf').numberspinner({
+            required:flag
+        });
+        $('#ss_byzy').textbox({
+            required:flag
+        });
+        $('#ss_xw').combobox({
+            required:flag
+        });
+        $('#ss_xwlx').combobox({
+            required:flag
+        });
+    }
+
+    function isxtdwpx_controller_required(flag) {
+        $('#xtdwname').textbox({
+            required:flag
+        });
+        $('#xrdwlevel').textbox({
+            required:flag
+        });
+        $('#xtyydc').textbox({
+            required:flag
+        });
+    }
+
+    function isdkzyjhzyys_controller_required(flag) {
+        $('#dkzyjhzyysscdw').textbox({
+            required:flag
+        });
+    }
+
+    function istgqgyszgks_controller_required(flag) {
+        $('#zyyszgzh').textbox({
+            required:flag
+        });
+    }
+
+    function xylx_controller_required(flag){
+        $('#workcompany').textbox({
+            required:flag
+        });
+        $('#companylevel').textbox({
+            required:flag
+        });
+        $('#yxdc').textbox({
+            required:flag
+        });
+        $('#ylwsjgtype').textbox({
+            required:flag
+        });
+        $('#ylwsjglsgx').textbox({
+            required:flag
+        });
+    }
+
+    function submitForm() {
+
+        $.messager.progress();	// display the progress bar
+        setTimeout(function () {
+            $.messager.progress('close');
+        }, 10000);
+
+        $('#form_app_user').form('submit', {
+
+            onSubmit: function () {
+                var isValid = $(this).form('validate');
+                if (!isValid) {
+                    $.messager.progress('close');	// hide progress bar while the form is invalid
+                }
+                return isValid;	// return false will stop the form submission
+            },
+            success: function (jsonStr) {
+                var data = eval('(' + jsonStr + ')');
+                if (data.status == 'SUCCESS') {
+                    $.messager.show({
+                        title: '消息',
+                        msg: data.msg,
+                        timeout: 1800,
+                    });
+                    refushThisTap();
+                } else {
+                    $.messager.alert('错误', data.msg, 'error');
+                }
+                $.messager.progress('close');	// hide progress bar while submit successfully
+            },
+            error: function () {
+                $.messager.alert('错误', '服务访问错误!!!', 'error');
+                $.messager.progress('close');
+            }
+        });
+    }
+
+    function refushThisTap(){
+        try{
+            var tab = top.$('#body').tabs('getSelected');
+            $('#body').tabs('update', {
+                tab: tab,
+                options: {
+                    title: tab.panel("options").title,
+                    content: tab.panel("options").content
+                }
+            });
+        }catch (e){
+            console.log(e);
+            console.log("no tag can call!!");
+        }
+    }
+
+</script>
+<shiro:hasRole name="manager">
+    <script>
+        $(function(){
+            $("button[name='statusButton']").on("click",function(){
+                $.messager.progress();
+                var that = this;
+                var status=$(this).data("status");
+                $.ajax({
+                    type: "POST",
+                    url: "/app/userstatus/change",
+                    data: {accountId:form_app_user.accountid.value,status:status},
+                    dataType: "json",
+                    success: function(data){
+                        if(data.status=='SUCCESS'){
+                            $.messager.show({
+                                title: '消息',
+                                msg: data.msg,
+                                timeout: 1800,
+                            });
+//                            if(status == 5){
+                            location.reload();
+//                            }else {
+//                                $("span[name='spanText']").html($(that).text());
+//                            }
+                        }else{
+                            $.messager.alert('错误',data.msg,'error');
+                        }
+                        $.messager.progress('close');
+                    }
+                });
+
+            });
+        });
+
+        function submitFormManager() {
+            $.messager.progress();	// display the progress bar
+            setTimeout(function () {
+                $.messager.progress('close');
+            }, 10000);
+
+            $('#form_app_user').form('submit', {
+                url:"/app/user/savechange",
+                onSubmit: function () {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        $.messager.progress('close');	// hide progress bar while the form is invalid
+                    }
+                    return isValid;	// return false will stop the form submission
+                },
+                success: function (jsonStr) {
+                    var data = eval('(' + jsonStr + ')');
+                    if (data.status == 'SUCCESS') {
+                        $.messager.show({
+                            title: '消息',
+                            msg: data.msg,
+                            timeout: 1800,
+                        });
+                        refushThisTap();
+                    } else {
+                        $.messager.alert('错误', data.msg, 'error');
+                    }
+                    $.messager.progress('close');	// hide progress bar while submit successfully
+                },
+                error: function () {
+                    $.messager.alert('错误', '服务访问错误!!!', 'error');
+                    $.messager.progress('close');
+                }
+            });
+        }
+    </script>
+</shiro:hasRole>
+</body>
+</html>
